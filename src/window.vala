@@ -58,6 +58,12 @@ namespace ETerm {
             }
         }
 
+        private void title_changed_cb(ETerm.Terminal terminal, string title) {
+            if (terminal == this.selected_terminal) {
+                this.headerbar.set_title(title);
+            }
+        }
+
         private void terminal_closed_cb(ETerm.FlowBoxChild child) {
             // TODO: Check if a proccess is runing and make an alert
             if (this.flowbox.get_count_childs() <= 0) {
@@ -105,6 +111,8 @@ namespace ETerm {
         public void new_terminal() {
             ETerm.Terminal term = new ETerm.Terminal();
             term.closed.connect(this.close_tab_from_term);
+            term.title_changed.connect(this.title_changed_cb);
+
             this.flowbox.add_term(term);
             this.set_term_state(ETerm.WindowState.TERMINAL);
             this.flowbox.set_current_term_from_index(this.flowbox.get_count_childs());
@@ -113,6 +121,7 @@ namespace ETerm {
         }
 
         public void close_tab_from_term(ETerm.Terminal term) {
+            this.flowbox.remove_term(term);
         }
 
         public void page_changed_cb(ETerm.Terminal term) {
@@ -123,6 +132,8 @@ namespace ETerm {
             this.selected_terminal = term;
             this.terminal_box.pack_start(this.selected_terminal, true, true, 0);
             this.set_term_state(ETerm.WindowState.TERMINAL, true);
+
+            this.headerbar.set_title(this.selected_terminal.get_title());
         }
     }
 }

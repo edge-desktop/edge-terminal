@@ -8,6 +8,7 @@ namespace ETerm {
 
         public HeaderBar() {
             this.set_show_close_button(true);
+            this.set_title("Terminal");
 
             Gtk.Image image = new Gtk.Image.from_icon_name("view-grid-symbolic", Gtk.IconSize.BUTTON);
             this.grid_button = new Gtk.ToggleButton();

@@ -12,6 +12,7 @@ namespace ETerm {
 
         public class FlowBoxChild(ETerm.Terminal term) {
             this.term = term;
+            this.term.title_changed.connect(this.terminal_title_changed);
 
             this.set_orientation(Gtk.Orientation.VERTICAL);
             this.set_border_width(8);
@@ -36,6 +37,10 @@ namespace ETerm {
             this.pack_end(this.term.get_image(), true, true, 0);
 
             this.show_all();
+        }
+
+        private void terminal_title_changed(ETerm.Terminal terminal, string title) {
+            this.label.set_label(title);
         }
     }
 

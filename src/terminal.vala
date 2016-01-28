@@ -3,6 +3,7 @@ namespace ETerm {
     public class Terminal: Gtk.Box {
 
         public signal void closed();
+        public signal void title_changed(string title);
 
         public Vte.Terminal terminal;
         public Gtk.Image image;
@@ -24,6 +25,7 @@ namespace ETerm {
             this.terminal.set_color_foreground(this.foreground_color);
             this.terminal.realize.connect(this.vte_realize_cb);
             this.terminal.child_exited.connect(this.vte_exited_cb);
+            this.terminal.window_title_changed.connect(this.title_changed_cb);
             this.pack_start(this.terminal, true, true, 0);
 
             Gtk.Adjustment adj = this.terminal.get_vadjustment();
@@ -53,13 +55,17 @@ namespace ETerm {
             }
         }
 
-        private void vte_realize_cb(Gtk.Widget vte) {
+        private void vte_realize_cb(Gtk.Widget terminal) {
             this.terminal.grab_focus();
             this.update_image();
         }
 
-        private void vte_exited_cb(Vte.Terminal vte, int status) {
+        private void vte_exited_cb(Vte.Terminal terminal, int status) {
             this.closed();
+        }
+
+        private void title_changed_cb(Vte.Terminal terminal) {
+            this.title_changed(this.terminal.get_window_title());
         }
 
         private void adj_changed(Gtk.Adjustment adj) {
@@ -76,7 +82,8 @@ namespace ETerm {
         }
 
         public string get_title() {
-            return "Title";
+            string title = this.terminal.get_window_title();
+            return (title != null)? title: "Terminal";
         }
 
         public void update_image() {
