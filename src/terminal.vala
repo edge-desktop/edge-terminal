@@ -80,7 +80,21 @@ namespace ETerm {
         }
 
         public void update_image() {
-            // TODO: make image from this widget
+            Gtk.Allocation alloc;
+            this.get_allocation(out alloc);
+
+            Gdk.Window win = this.terminal.get_window();
+            if (win == null) {
+                return;
+            }
+
+            if (!win.is_viewable()) {
+                return;
+            }
+
+            Gdk.Pixbuf pixbuf = Gdk.pixbuf_get_from_window(win, 0, 0, alloc.width, alloc.height);
+            pixbuf = pixbuf.scale_simple(200, 150, Gdk.InterpType.HYPER);
+            this.image.set_from_pixbuf(pixbuf);
         }
 
         public Gtk.Image get_image() {

@@ -12,8 +12,6 @@ namespace ETerm {
 
         public ETerm.WindowState state = ETerm.WindowState.NO_STARTED;
 
-        private uint TIMEOUT_ID = 0;
-
         public Window(ETerm.App app) {
             this.app = app;
 
@@ -71,7 +69,7 @@ namespace ETerm {
                     this.stack.set_visible_child(this.terminal_box);
                     this.headerbar.grid_button.set_active(false);
 
-                    this.TIMEOUT_ID = GLib.Timeout.add(300, () => {
+                    GLib.Timeout.add(300, () => {
                         this.grab_term_focus();
                         return false;
                     });
@@ -83,8 +81,13 @@ namespace ETerm {
                     break;
 
                 case ETerm.WindowState.GRID:
-                    this.stack.set_visible_child(this.flowbox);
                     this.headerbar.grid_button.set_active(true);
+
+                    foreach (ETerm.FlowBoxChild child in this.flowbox.childs) {
+                        child.term.update_image();
+                    }
+
+                    this.stack.set_visible_child(this.flowbox);
                     break;
             }
         }
@@ -95,16 +98,14 @@ namespace ETerm {
             this.flowbox.add_term(term);
             this.set_term_state(ETerm.WindowState.TERMINAL);
             this.flowbox.set_current_term_from_index(this.flowbox.get_count_childs());
+
+            this.page_changed_cb(term);
         }
 
         public void close_tab_from_term(ETerm.Terminal term) {
         }
 
         public void page_changed_cb(ETerm.Terminal term) {
-            if (this.selected_terminal == term) {
-                return;
-            }
-
             if (this.selected_terminal != null) {
                 this.terminal_box.remove(this.selected_terminal);
             }
