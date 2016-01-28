@@ -8,12 +8,20 @@ namespace ETerm {
         public Gtk.Image image;
         public Gtk.Scrollbar scrollbar;
 
+        public Gdk.RGBA background_color = Gdk.RGBA();
+        public Gdk.RGBA foreground_color = Gdk.RGBA();
+
         public Terminal() {
             this.set_orientation(Gtk.Orientation.HORIZONTAL);
 
             this.image = new Gtk.Image();
 
+            this.background_color.parse("#262c37");
+            this.foreground_color.parse("#009688");
+
             this.terminal = new Vte.Terminal();
+            this.terminal.set_color_background(this.background_color);
+            this.terminal.set_color_foreground(this.foreground_color);
             this.terminal.realize.connect(this.vte_realize_cb);
             this.terminal.child_exited.connect(this.vte_exited_cb);
             this.pack_start(this.terminal, true, true, 0);
