@@ -29,6 +29,7 @@ namespace ETerm {
             this.flowbox = new ETerm.FlowBox();
             this.flowbox.page_changed.connect(this.page_changed_cb);
             this.flowbox.new_terminal.connect(() => { this.new_terminal(); });
+            this.flowbox.terminal_closed.connect(this.terminal_closed_cb);
             this.stack.add_named(this.flowbox, "flowbox");
 
             this.terminal_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
@@ -54,6 +55,15 @@ namespace ETerm {
 
             if (!term.has_focus) {
                 term.grab_focus();
+            }
+        }
+
+        private void terminal_closed_cb(ETerm.FlowBoxChild child) {
+            // TODO: Check if a proccess is runing and make an alert
+            if (this.flowbox.get_count_childs() <= 0) {
+                this.destroy();
+            } else {
+                this.flowbox.remove_term(child.term);
             }
         }
 

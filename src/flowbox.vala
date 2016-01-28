@@ -2,6 +2,8 @@ namespace ETerm {
 
     public class FlowBoxChild: Gtk.Box {
 
+        public signal void close();
+
         public ETerm.Terminal term;
 
         public Gtk.Label label;
@@ -27,7 +29,7 @@ namespace ETerm {
             this.button = new Gtk.Button();
             this.button.set_relief(Gtk.ReliefStyle.NONE);
             this.button.set_image(new Gtk.Image.from_icon_name("window-close-symbolic", Gtk.IconSize.BUTTON));
-            this.button.clicked.connect(() => { print("Close tab\n"); });
+            this.button.clicked.connect(() => { this.close(); });
             box.pack_end(this.button, false, false, 0);
 
             this.term.update_image();
@@ -51,6 +53,7 @@ namespace ETerm {
 
         public signal void page_changed(ETerm.Terminal term);
         public signal void new_terminal();
+        public signal void terminal_closed(ETerm.FlowBoxChild child);
 
         public ETerm.Terminal selected_terminal;
 
@@ -111,20 +114,28 @@ namespace ETerm {
             }
 
             ETerm.FlowBoxChild child = new ETerm.FlowBoxChild(term);
+            child.close.connect(() => { this.terminal_closed(child); });
             this.childs.append(child);
             this.terminals.append(term);
             this.box.insert(child, (int)this.box.get_children().length() - 1);
         }
 
         public void remove_term(ETerm.Terminal term) {
-            this.terminals.remove(term);
+            int index = 0;
 
             foreach (ETerm.FlowBoxChild child in this.childs) {
                 if (child.term == term) {
+                    this.terminals.remove(term);
                     this.childs.remove(child);
-                    this.remove(child);
+                    this.box.remove((Gtk.FlowBoxChild)child.get_parent());
                     break;
                 }
+
+                index ++;
+            }
+
+            if (this.selected_terminal == term) {
+                this.set_current_term_from_index((index < this.get_count_childs())? index: this.get_count_childs());
             }
         }
 
