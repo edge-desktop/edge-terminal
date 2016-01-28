@@ -8,7 +8,8 @@ SRC = src/edge_terminal.vala \
       src/headerbar.vala \
       src/terminal.vala \
       src/flowbox.vala \
-      src/globals.vala
+      src/globals.vala \
+      src/utils.vala
 
 BIN = edge-terminal
 

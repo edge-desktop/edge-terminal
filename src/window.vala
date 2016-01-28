@@ -30,6 +30,7 @@ namespace ETerm {
 
             this.flowbox = new ETerm.FlowBox();
             this.flowbox.page_changed.connect(this.page_changed_cb);
+            this.flowbox.new_terminal.connect(() => { this.new_terminal(); });
             this.stack.add_named(this.flowbox, "flowbox");
 
             this.terminal_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
@@ -37,7 +38,7 @@ namespace ETerm {
 
             this.realize.connect(this.realize_cb);
 
-            this.new_term();
+            this.new_terminal();
             this.show_all();
         }
 
@@ -88,11 +89,12 @@ namespace ETerm {
             }
         }
 
-        public void new_term() {
+        public void new_terminal() {
             ETerm.Terminal term = new ETerm.Terminal();
             term.closed.connect(this.close_tab_from_term);
             this.flowbox.add_term(term);
             this.set_term_state(ETerm.WindowState.TERMINAL);
+            this.flowbox.set_current_term_from_index(this.flowbox.get_count_childs());
         }
 
         public void close_tab_from_term(ETerm.Terminal term) {

@@ -37,9 +37,20 @@ namespace ETerm {
         }
     }
 
+    public class FlowBoxChildNew: Gtk.Box {
+
+        public FlowBoxChildNew() {
+            this.set_orientation(Gtk.Orientation.VERTICAL);
+
+            this.pack_start(ETerm.make_image("list-add-symbolic", 100), true, true, 0);
+            this.show_all();
+        }
+    }
+
     public class FlowBox: Gtk.ScrolledWindow {
 
         public signal void page_changed(ETerm.Terminal term);
+        public signal void new_terminal();
 
         public ETerm.Terminal selected_terminal;
 
@@ -47,6 +58,8 @@ namespace ETerm {
 
         public GLib.List<ETerm.FlowBoxChild> childs;
         public GLib.List<ETerm.Terminal> terminals;
+
+        public Gtk.FlowBoxChild child_add;
 
         public FlowBox() {
             this.set_border_width(10);
@@ -61,6 +74,8 @@ namespace ETerm {
             this.box.child_activated.connect(this._page_changed);
             box.pack_start(this.box, false, false, 0);
 
+            this.make_child_new();
+
             this.childs = new GLib.List<ETerm.FlowBoxChild>();
             this.terminals = new GLib.List<ETerm.Terminal>();
         }
@@ -70,10 +85,22 @@ namespace ETerm {
                 return;
             }
 
+            if (child == this.child_add) {
+                this.new_terminal();
+                return;
+            }
+
             Gtk.Widget widget = child.get_child();
             ETerm.FlowBoxChild echild = (ETerm.FlowBoxChild)widget;
             this.selected_terminal = echild.term;
             this.page_changed(this.selected_terminal);
+        }
+
+        private void make_child_new() {
+            ETerm.FlowBoxChildNew child = new ETerm.FlowBoxChildNew();
+            this.box.insert(child, -1);
+
+            this.child_add = (Gtk.FlowBoxChild)child.get_parent();
         }
 
         public void add_term(ETerm.Terminal term) {
@@ -86,7 +113,7 @@ namespace ETerm {
             ETerm.FlowBoxChild child = new ETerm.FlowBoxChild(term);
             this.childs.append(child);
             this.terminals.append(term);
-            this.box.add(child);
+            this.box.insert(child, (int)this.box.get_children().length() - 1);
         }
 
         public void remove_term(ETerm.Terminal term) {
@@ -125,20 +152,26 @@ namespace ETerm {
         }
 
         public void set_current_term_from_index(int index) {
-            if (index > this.childs.length()) {
+            if (index > this.childs.length() - 1) {
                 GLib.warning("Fail to select a terminal");
+                return;
             }
 
-            ETerm.FlowBoxChild echild = this.childs.nth_data(index);
+            ETerm.FlowBoxChild echild;
+
+            echild = this.childs.nth_data(index);
 
             if (echild.get_parent() == null) {
-                print("null\n");
                 return;
             }
 
             this.selected_terminal = echild.term;
             Gtk.FlowBoxChild child = (Gtk.FlowBoxChild)echild.get_parent();
             this.box.select_child(child);
+        }
+
+        public int get_count_childs() {
+            return (int)this.childs.length() - 1;
         }
     }
 }
