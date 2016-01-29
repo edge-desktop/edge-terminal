@@ -9,7 +9,13 @@ namespace ETerm {
 	    protected override void activate() {
 	        this.window_removed.connect(this.window_removed_cb);
 	        //this.add_actions();
+            this.set_dark_theme();
             this.new_window();
+        }
+
+        private void set_dark_theme() {
+            Gtk.Settings settings = Gtk.Settings.get_default();
+            settings.gtk_application_prefer_dark_theme = true;
         }
 
         private void window_removed_cb(Gtk.Application self, Gtk.Window window) {
