@@ -20,4 +20,16 @@ namespace ETerm {
     public Gtk.Image make_image(string name, int size) {
         return new Gtk.Image.from_pixbuf(ETerm.make_pixbuf(name, size));
     }
+
+    public void load_theme(Gtk.Widget widget, string theme) {
+        Gtk.CssProvider style_provider = new Gtk.CssProvider();
+        try {
+            style_provider.load_from_data(theme, theme.length);
+        } catch (GLib.Error error) {
+            return;
+        }
+
+        Gtk.StyleContext context = widget.get_style_context();
+        context.add_provider(style_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+    }
 }

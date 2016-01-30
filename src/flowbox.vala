@@ -10,6 +10,8 @@ namespace ETerm {
         public Gtk.Button button;
         public Gtk.Image image;
 
+        public bool selected = false;
+
         public class FlowBoxChild(ETerm.Terminal term) {
             this.term = term;
             this.term.title_changed.connect(this.terminal_title_changed);
@@ -42,6 +44,17 @@ namespace ETerm {
         private void terminal_title_changed(ETerm.Terminal terminal, string title) {
             this.label.set_label(title);
         }
+
+        public void load_theme(bool selected) {
+            if (selected == this.selected) {
+                return;
+            }
+
+            this.selected = selected;
+
+            string theme = "* { color: %s; }".printf(this.selected? "#009688": "#FFFFFF");
+            ETerm.load_theme(this.label, theme);
+        }
     }
 
     public class FlowBoxChildNew: Gtk.Box {
@@ -71,8 +84,6 @@ namespace ETerm {
         public Gtk.FlowBoxChild child_add;
 
         public FlowBox() {
-            this.set_border_width(10);
-
             Gtk.Box box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
             this.add(box);
 
@@ -87,6 +98,9 @@ namespace ETerm {
 
             this.childs = new GLib.List<ETerm.FlowBoxChild>();
             this.terminals = new GLib.List<ETerm.Terminal>();
+
+            string theme = "* { background-color: #275292 }";
+            ETerm.load_theme(this, theme);
         }
 
         private void _page_changed(Gtk.FlowBox box, Gtk.FlowBoxChild child) {
@@ -124,6 +138,9 @@ namespace ETerm {
             this.childs.append(child);
             this.terminals.append(term);
             this.box.insert(child, (int)this.box.get_children().length() - 1);
+
+            string theme = "* { background-color: #275292 }";
+            ETerm.load_theme((child.get_parent() as Gtk.FlowBoxChild), theme);
         }
 
         public void remove_term(ETerm.Terminal term) {

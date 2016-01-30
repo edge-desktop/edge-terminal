@@ -135,6 +135,11 @@ namespace ETerm {
             this.set_term_state(ETerm.WindowState.TERMINAL, true);
 
             this.headerbar.set_title(this.selected_terminal.get_title());
+
+
+            foreach (ETerm.FlowBoxChild flowboxchild in this.flowbox.childs) {
+                flowboxchild.load_theme(flowboxchild.term == term);
+            }
         }
 
         public void copy() {
