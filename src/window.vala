@@ -135,5 +135,13 @@ namespace ETerm {
 
             this.headerbar.set_title(this.selected_terminal.get_title());
         }
+
+        public void copy() {
+            this.selected_terminal.copy_text();
+        }
+
+        public void paste() {
+            this.selected_terminal.paste_text();
+        }
     }
 }

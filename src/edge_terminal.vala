@@ -8,9 +8,37 @@ namespace ETerm {
 
 	    protected override void activate() {
 	        this.window_removed.connect(this.window_removed_cb);
-	        //this.add_actions();
+	        this.add_actions();
             this.set_dark_theme();
             this.new_window();
+        }
+
+        private void add_actions() {
+            GLib.SimpleAction action = new GLib.SimpleAction("copy", null);
+            action.activate.connect(this.copy);
+            this.add_action(action);
+
+            action = new GLib.SimpleAction("paste", null);
+            action.activate.connect(this.paste);
+            this.add_action(action);
+
+            action = new GLib.SimpleAction("new-window", null);
+            action.activate.connect(this.new_window);
+            this.add_action(action);
+
+            action = new GLib.SimpleAction("new-tab", null);
+            action.activate.connect(this.new_tab);
+            this.add_action(action);
+
+            action = new GLib.SimpleAction("close-tab", null);
+            action.activate.connect(this.close_tab);
+            this.add_action(action);
+
+            this.set_accels_for_action("app.copy", ETerm.ACCEL_COPY);
+            this.set_accels_for_action("app.paste", ETerm.ACCEL_PASTE);
+            this.set_accels_for_action("app.new-window", ETerm.ACCEL_NEW_WINDOW);
+            this.set_accels_for_action("app.new-tab", ETerm.ACCEL_NEW_TAB);
+            this.set_accels_for_action("app.close-tab", ETerm.ACCEL_CLOSE_TAB);
         }
 
         private void set_dark_theme() {
@@ -27,6 +55,30 @@ namespace ETerm {
         public void new_window() {
             ETerm.Window win = new ETerm.Window(this);
             this.add_window(win);
+        }
+
+        public ETerm.Window get_current_window() {
+            Gtk.Window win = this.get_active_window();
+            return (win as ETerm.Window);
+        }
+
+        public void copy() {
+            this.get_current_window().copy();
+        }
+
+        public void paste() {
+            this.get_current_window().paste();
+        }
+
+        public void new_tab() {
+            ETerm.Window win = this.get_current_window();
+            win.selected_terminal.update_image();
+            win.new_terminal();
+        }
+
+        public void close_tab() {
+            ETerm.Window win = this.get_current_window();
+            win.close_tab_from_term(win.selected_terminal);
         }
     }
 }

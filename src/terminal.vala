@@ -57,7 +57,11 @@ namespace ETerm {
 
         private void vte_realize_cb(Gtk.Widget terminal) {
             this.terminal.grab_focus();
-            this.update_image();
+
+            GLib.Timeout.add(300, () => {
+                this.update_image();
+                return false;
+            });
         }
 
         private void vte_exited_cb(Vte.Terminal terminal, int status) {
@@ -106,6 +110,22 @@ namespace ETerm {
 
         public Gtk.Image get_image() {
             return this.image;
+        }
+
+        public bool get_has_selection() {
+            return this.terminal.get_has_selection();
+        }
+
+        public void copy_text() {
+            if (!this.get_has_selection()) {
+                return;
+            }
+
+            this.terminal.copy_clipboard();
+        }
+
+        public void paste_text() {
+            this.terminal.paste_clipboard();
         }
     }
 }
