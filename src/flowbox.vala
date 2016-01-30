@@ -59,6 +59,7 @@ namespace ETerm {
         public signal void page_changed(ETerm.Terminal term);
         public signal void new_terminal();
         public signal void terminal_closed(ETerm.FlowBoxChild child);
+        public signal void close_window();
 
         public ETerm.Terminal selected_terminal;
 
@@ -139,8 +140,14 @@ namespace ETerm {
                 index ++;
             }
 
+            if (this.get_count_childs() == -1) {
+                this.close_window();
+                return;
+            }
+
             if (this.selected_terminal == term) {
                 this.set_current_term_from_index((index < this.get_count_childs())? index: this.get_count_childs());
+                this.page_changed(this.selected_terminal);
             }
         }
 

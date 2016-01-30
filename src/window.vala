@@ -30,6 +30,7 @@ namespace ETerm {
             this.flowbox.page_changed.connect(this.page_changed_cb);
             this.flowbox.new_terminal.connect(() => { this.new_terminal(); });
             this.flowbox.terminal_closed.connect(this.terminal_closed_cb);
+            this.flowbox.close_window.connect(() => this.destroy());
             this.stack.add_named(this.flowbox, "flowbox");
 
             this.terminal_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
