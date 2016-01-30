@@ -11,8 +11,10 @@ SRC = src/edge_terminal.vala \
       src/globals.vala \
       src/utils.vala
 
+OPTIONS = -X -w  # Ignore gcc warnings
+
 BIN = edge-terminal
 
 all:
-	$(VALAC) $(PKG) $(SRC) -o $(BIN)
+	$(VALAC) $(PKG) $(SRC) $(OPTIONS) -o $(BIN)
 

@@ -14,7 +14,9 @@ namespace ETerm {
         }
 
         private void add_actions() {
-            GLib.SimpleAction action = new GLib.SimpleAction("copy", null);
+            GLib.SimpleAction action;
+
+            action = new GLib.SimpleAction("copy", null);
             action.activate.connect(this.copy);
             this.add_action(action);
 
@@ -34,11 +36,11 @@ namespace ETerm {
             action.activate.connect(this.close_tab);
             this.add_action(action);
 
-            this.set_accels_for_action("app.copy", ETerm.ACCEL_COPY);
-            this.set_accels_for_action("app.paste", ETerm.ACCEL_PASTE);
-            this.set_accels_for_action("app.new-window", ETerm.ACCEL_NEW_WINDOW);
-            this.set_accels_for_action("app.new-tab", ETerm.ACCEL_NEW_TAB);
-            this.set_accels_for_action("app.close-tab", ETerm.ACCEL_CLOSE_TAB);
+            this.set_accels_for_action("app.copy", { "<Primary><Shift>C" });
+            this.set_accels_for_action("app.paste", { "<Primary><Shift>V" });
+            this.set_accels_for_action("app.new-window", { "<Primary><Shift>N" });
+            this.set_accels_for_action("app.new-tab", { "<Primary><Shift>T" });
+            this.set_accels_for_action("app.close-tab", { "<Primary><Shift>W" });
         }
 
         private void set_dark_theme() {
